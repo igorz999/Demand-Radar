@@ -1,0 +1,5 @@
+keyword,week_start,alert_type,magnitude_pct,z_score,duration_weeks,signal_source,source_score,group_score,magnitude_score,importance_score,quality_penalty,confidence,explanation
+flu,2026-04-06,drop,277.3963175963758,-2.421406155758666,1,wiki,24.0,20.0,19.17,9.0,0.0,72.17,"DROP on flu: source=24.0, group=20.0, magnitude=19.2, importance=9.0, quality_penalty=0.0"
+influenza,2026-04-06,drop,277.3963175963758,-2.421406155758666,1,wiki,24.0,20.0,19.17,9.0,0.0,72.17,"DROP on influenza: source=24.0, group=20.0, magnitude=19.2, importance=9.0, quality_penalty=0.0"
+fever,2026-04-06,drop,469.6526897712481,-3.638594219248141,1,wiki,24.0,20.0,22.0,6.0,0.0,72.0,"DROP on fever: source=24.0, group=20.0, magnitude=22.0, importance=6.0, quality_penalty=0.0"
+respiratory infection,2026-04-06,drop,500.0,-3.194161706598723,1,wiki,24.0,20.0,22.0,6.0,0.0,72.0,"DROP on respiratory infection: source=24.0, group=20.0, magnitude=22.0, importance=6.0, quality_penalty=0.0"

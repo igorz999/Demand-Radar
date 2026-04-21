@@ -1,0 +1,136 @@
+{
+  "keywords": [
+    {
+      "id": 1,
+      "keyword": "influenza",
+      "display_name": "Influenza",
+      "layer": "core_disease",
+      "importance": "critical",
+      "category": "disease",
+      "description": "Direct disease term, major epidemic trigger",
+      "expected_volume": "high",
+      "correlation_group": "disease_outbreak",
+      "search_enabled": true,
+      "news_enabled": true
+    },
+    {
+      "id": 2,
+      "keyword": "flu",
+      "display_name": "Flu",
+      "layer": "core_disease",
+      "importance": "critical",
+      "category": "disease",
+      "description": "Most common colloquial term for influenza",
+      "expected_volume": "very_high",
+      "correlation_group": "disease_outbreak",
+      "search_enabled": true,
+      "news_enabled": true
+    },
+    {
+      "id": 3,
+      "keyword": "respiratory infection",
+      "display_name": "Respiratory Infection",
+      "layer": "core_disease",
+      "importance": "high",
+      "category": "disease",
+      "description": "Broader category, captures varieties",
+      "expected_volume": "medium",
+      "correlation_group": "disease_outbreak",
+      "search_enabled": true,
+      "news_enabled": true
+    },
+    {
+      "id": 4,
+      "keyword": "sore throat",
+      "display_name": "Sore Throat",
+      "layer": "symptom",
+      "importance": "high",
+      "category": "symptom",
+      "description": "Specific symptom, drives remedies purchase",
+      "expected_volume": "medium",
+      "correlation_group": "symptoms",
+      "search_enabled": true,
+      "news_enabled": true
+    },
+    {
+      "id": 5,
+      "keyword": "body aches",
+      "display_name": "Body Aches",
+      "layer": "symptom",
+      "importance": "medium",
+      "category": "symptom",
+      "description": "Common cold/flu symptom",
+      "expected_volume": "medium",
+      "correlation_group": "symptoms",
+      "search_enabled": true,
+      "news_enabled": true,
+      "false_positive_risk": "high"
+    },
+    {
+      "id": 6,
+      "keyword": "chills",
+      "display_name": "Chills",
+      "layer": "symptom",
+      "importance": "medium",
+      "category": "symptom",
+      "description": "Symptom, may correlate with fever searches",
+      "expected_volume": "low",
+      "correlation_group": "symptoms",
+      "search_enabled": true,
+      "news_enabled": true,
+      "false_positive_risk": "high"
+    },
+    {
+      "id": 7,
+      "keyword": "fever",
+      "display_name": "Fever",
+      "layer": "symptom",
+      "importance": "high",
+      "category": "symptom",
+      "description": "Key symptom associated with cold/flu",
+      "expected_volume": "high",
+      "correlation_group": "symptoms",
+      "search_enabled": true,
+      "news_enabled": true
+    },
+    {
+      "id": 8,
+      "keyword": "lozenges",
+      "display_name": "Lozenges",
+      "layer": "treatment",
+      "importance": "medium",
+      "category": "product",
+      "description": "Throat relief product",
+      "expected_volume": "low",
+      "correlation_group": "products",
+      "search_enabled": true,
+      "news_enabled": true
+    }
+  ],
+  "correlation_groups": {
+    "disease_outbreak": [
+      "influenza",
+      "flu",
+      "respiratory infection"
+    ],
+    "symptoms": [
+      "sore throat",
+      "body aches",
+      "chills",
+      "fever"
+    ],
+    "products": [
+      "lozenges"
+    ]
+  },
+  "metadata": {
+    "total_keywords": 8,
+    "critical_importance_count": 2,
+    "high_importance_count": 3,
+    "medium_importance_count": 3,
+    "low_importance_count": 0,
+    "created_date": "2026-04-13",
+    "last_updated": "2026-04-18",
+    "notes": "Reduced to a strong 8-keyword shortlist for cleaner signal quality and faster fetches."
+  }
+}
