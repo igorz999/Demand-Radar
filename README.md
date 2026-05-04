@@ -1,28 +1,71 @@
 # Demand RADAR Dashboard
 
-Demand RADAR is a digital prototype designed for the Digital Innovation & Design Thinking course at HEC Lausanne.
+Demand RADAR is an explainable early-warning system designed to detect demand signals for cold and flu related products using public data sources.
 
-The goal of the project is to help supply chain decision makers detect early demand signals for cold and flu related products by combining multiple public data sources into an explainable alert dashboard.
+This project was developed as part of the Digital Innovation & Design Thinking course at HEC Lausanne.
 
-## Project Overview
+---
 
-The prototype focuses on:
+## Overview
 
-- Early detection of demand trends, spikes, and drops
-- Multi-signal validation to reduce false positives
-- Explainable alerts supported by source-level evidence
-- Confidence scores to help users assess reliability
-- A dashboard interface for interpreting demand signals
+The goal of the system is to support decision makers by identifying early demand trends from multiple weak signals and transforming them into actionable insights.
 
-## Prototype
+The dashboard combines:
 
-The current prototype is implemented as a Streamlit dashboard.
+- Wikipedia pageviews (public interest)
+- GDELT news mentions (media attention)
+- Aggregated signals across multiple keywords
 
-It allows users to explore demand-related signals and understand why specific alerts are generated.
+---
+
+## Key Features
+
+- **Trend Detection**  
+  Identifies spikes, sustained increases, and drops in demand signals
+
+- **Multi-Signal Validation**  
+  Reduces false positives by requiring confirmation across multiple sources
+
+- **Explainable Alerts**  
+  Shows why an alert was triggered and which signals contributed
+
+- **Confidence Score**  
+  Helps users assess the reliability of each alert
+
+- **Interactive Dashboard**  
+  Allows users to explore signals and interpret trends visually
+
+---
+
+## Prototype Preview
+
+*(Add screenshots here — very important)*
+
+Example:
+
+![Dashboard Screenshot](project_files/screenshots/dashboard.png)
+
+---
+
+## How It Works
+
+1. Collect signals from public data sources (Wikipedia, GDELT)
+2. Aggregate signals across multiple keywords
+3. Detect anomalies (spikes, trends, drops)
+4. Validate signals across sources
+5. Generate alerts with explanation and confidence score
+
+---
 
 ## How to Run the Prototype
 
-From the project root, run:
+### Option 1 — Using virtual environment
 
 ```bash
+cd project_files
 ../.venv/bin/streamlit run dashboard/app.py
+
+### Option 2 - If Streamlit installed globally
+
+cd project_files
+streamlit run dashboard/app.py
