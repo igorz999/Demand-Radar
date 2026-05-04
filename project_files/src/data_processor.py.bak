@@ -1,0 +1,154 @@
+"""
+Data preprocessing for DEMAND RADAR.
+Creates weekly aggregates, normalized signals, and baseline statistics.
+"""
+
+from __future__ import annotations
+
+import json
+from pathlib import Path
+from typing import Dict, Tuple
+
+import pandas as pd
+
+
+class DemandRadarDataProcessor:
+    """Transforms raw source CSV files into a weekly analysis dataset."""
+
+    def __init__(self, keywords_json_path: str):
+        with open(keywords_json_path, "r") as f:
+            self.keywords_config = json.load(f)
+        self.keywords = [item["keyword"] for item in self.keywords_config["keywords"]]
+
+    @staticmethod
+    def _ensure_datetime(df: pd.DataFrame, column: str = "date") -> pd.DataFrame:
+        df = df.copy()
+        df[column] = pd.to_datetime(df[column], errors="coerce")
+        return df.dropna(subset=[column])
+
+    def _build_week_keyword_grid(
+        self,
+        start_date: pd.Timestamp,
+        end_date: pd.Timestamp,
+    ) -> pd.DataFrame:
+        weeks = pd.date_range(start=start_date, end=end_date, freq="W-MON")
+        return pd.MultiIndex.from_product(
+            [weeks, self.keywords], names=["week_start", "keyword"]
+        ).to_frame(index=False)
+
+    @staticmethod
+    def _zscore(series: pd.Series) -> pd.Series:
+        std = series.std(ddof=0)
+        if std == 0 or pd.isna(std):
+            return pd.Series(0.0, index=series.index)
+        return (series - series.mean()) / std
+
+    def process(
+        self,
+        wikipedia_csv_path: str,
+        gdelt_csv_path: str,
+        processed_output_path: str = "data/processed_data.csv",
+        baseline_output_path: str = "data/baseline_stats.json",
+    ) -> Tuple[pd.DataFrame, Dict[str, Dict[str, float]]]:
+        """Process raw source CSVs and return processed dataframe + baseline stats."""
+
+        wiki = pd.read_csv(wikipedia_csv_path)
+        gdelt = pd.read_csv(gdelt_csv_path)
+
+        wiki = self._ensure_datetime(wiki, "date")
+        gdelt = self._ensure_datetime(gdelt, "date")
+
+        wiki_weekly = (
+            wiki.groupby(
+                [pd.Grouper(key="date", freq="W-MON"), "keyword"], as_index=False
+            )["pageviews"]
+            .sum()
+            .rename(columns={"date": "week_start", "pageviews": "wiki_pageviews"})
+        )
+
+        gdelt_weekly = (
+            gdelt.groupby(
+                [pd.Grouper(key="date", freq="W-MON"), "keyword"], as_index=False
+            )
+            .agg({"mention_count": "sum", "normalized_mentions": "mean"})
+            .rename(
+                columns={
+                    "mention_count": "gdelt_mentions",
+                    "normalized_mentions": "gdelt_normalized_avg",
+                }
+            )
+        )
+
+        min_date = min(
+            wiki_weekly["week_start"].min(), gdelt_weekly["week_start"].min()
+        )
+        max_date = max(
+            wiki_weekly["week_start"].max(), gdelt_weekly["week_start"].max()
+        )
+
+        grid = self._build_week_keyword_grid(min_date, max_date)
+        processed = (
+            grid.merge(wiki_weekly, on=["week_start", "keyword"], how="left")
+            .merge(gdelt_weekly, on=["week_start", "keyword"], how="left")
+            .bfill(limit=2)
+            .fillna(
+                {
+                    "wiki_pageviews": 0.0,
+                    "gdelt_mentions": 0.0,
+                    "gdelt_normalized_avg": 0.0,
+                }
+            )
+        )
+
+        processed["wiki_z"] = processed.groupby("keyword")["wiki_pageviews"].transform(
+            self._zscore
+        )
+        processed["gdelt_z"] = processed.groupby("keyword")["gdelt_mentions"].transform(
+            self._zscore
+        )
+
+        baseline_df = (
+            processed.groupby("keyword", as_index=False)
+            .agg(
+                wiki_mean=("wiki_pageviews", "mean"),
+                wiki_std=("wiki_pageviews", "std"),
+                gdelt_mean=("gdelt_mentions", "mean"),
+                gdelt_std=("gdelt_mentions", "std"),
+            )
+            .fillna(0.0)
+        )
+
+        baseline_stats = {
+            row["keyword"]: {
+                "wiki_mean": float(row["wiki_mean"]),
+                "wiki_std": float(row["wiki_std"]),
+                "gdelt_mean": float(row["gdelt_mean"]),
+                "gdelt_std": float(row["gdelt_std"]),
+            }
+            for _, row in baseline_df.iterrows()
+        }
+
+        # Composite metrics removed; detectors now work with wiki_z and gdelt_z independently
+
+        processed = processed.sort_values(["week_start", "keyword"]).reset_index(
+            drop=True
+        )
+
+        Path(processed_output_path).parent.mkdir(parents=True, exist_ok=True)
+        processed.to_csv(processed_output_path, index=False)
+        with open(baseline_output_path, "w") as f:
+            json.dump(baseline_stats, f, indent=2)
+
+        return processed, baseline_stats
+
+
+if __name__ == "__main__":
+    processor = DemandRadarDataProcessor("keywords.json")
+    processed_df, stats = processor.process(
+        wikipedia_csv_path="data/wikipedia_data.csv",
+        gdelt_csv_path="data/gdelt_data.csv",
+        processed_output_path="data/processed_data.csv",
+        baseline_output_path="data/baseline_stats.json",
+    )
+    print(f"Processed rows: {len(processed_df)}")
+    print(f"Baseline keywords: {len(stats)}")
