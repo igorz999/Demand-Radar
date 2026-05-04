@@ -39,7 +39,6 @@ The dashboard combines:
 
 ## Prototype Preview
 
-*(Add screenshots here — very important)*
 
 Example:
 
@@ -64,8 +63,11 @@ Example:
 ```bash
 cd project_files
 ../.venv/bin/streamlit run dashboard/app.py
+```
 
 ### Option 2 - If Streamlit installed globally
 
+```bash
 cd project_files
 streamlit run dashboard/app.py
+```
